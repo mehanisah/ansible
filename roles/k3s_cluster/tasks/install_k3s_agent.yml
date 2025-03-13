@@ -1,0 +1,34 @@
+---
+- name: Configure k8s worker
+  hosts: agent-host
+  become: true
+  become_user: root
+  
+  tasks:
+
+    - name: Define K3s installation parameters
+      set_fact:
+        k3s_version: "{{ k3s_version }}"
+        k3s_token: "{{ k3s_token }}"
+        
+    - name: Update APT package cache
+      become: true
+      apt:
+        update_cache: yes
+
+    - name: Disable UFW
+      ufw:
+        state: disabled
+    
+    - name: Run K3s worker installation
+      shell: |
+        if ! command -v k3s-agent >/dev/null; then
+          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION={{ k3s_version }} K3S_TOKEN={{ k3s_token }} sh -s - agent \
+          --docker --server https://{{ hostvars[groups['virtual-load-balancer'][0]]['ansible_host'] }}:6443;
+        fi
+
+    - name: Check K3s agent status
+      command: systemctl is-active k3s-agent
+      register: k3s_agent_status
+      changed_when: false
+      failed_when: k3s_agent_status.stdout != "active"

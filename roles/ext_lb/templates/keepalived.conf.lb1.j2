@@ -1,0 +1,25 @@
+global_defs {
+  enable_script_security
+  script_user root
+}
+
+vrrp_script chk_haproxy {
+    script 'killall -0 haproxy' # faster than pidof
+    interval 2
+}
+
+vrrp_instance haproxy-vip {
+    interface eth0  # Please confirm your network setting use the correct interface
+    state MASTER
+    priority 200
+
+    virtual_router_id 51
+
+    virtual_ipaddress {
+        {{ hostvars[groups['virtual-load-balancer'][0]]['ansible_host'] }}/24
+    }
+
+    track_script {
+        chk_haproxy
+    }
+}
