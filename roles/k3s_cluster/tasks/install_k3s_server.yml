@@ -31,9 +31,9 @@
           --tls-san={{ hostvars[groups['virtual-load-balancer'][0]]['ansible_host'] }};
         fi
 
-    - name: Sleep for 20 seconds
+    - name: Sleep for 40 seconds
       pause:
-        seconds: 20
+        seconds: 40
 
     - name: Create .kube directory for root
       file:
