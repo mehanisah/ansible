@@ -30,6 +30,7 @@
           --docker \
           --tls-san={{ hostvars[groups['virtual-load-balancer'][0]]['ansible_host'] }};
         fi
+      creates: /usr/local/bin/k3s
 
     - name: Create .kube directory for root
       file:
