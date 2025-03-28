@@ -19,16 +19,21 @@
       ufw:
         state: disabled
 
-    - name: Run K3s server installation (idempotent using 'creates')
-      command: >
-        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION={{ k3s_version }}  K3S_TOKEN={{ k3s_token }} sh -s - server
-        --server https://{{ hostvars[groups['control-plane-1'][0]]['ansible_host'] }}:6443
-        --disable traefik
-        --disable servicelb
-        --disable local-storage
-        --docker
-        --tls-san={{ hostvars[groups['virtual-load-balancer'][0]]['ansible_host'] }}
-      creates: /usr/local/bin/k3s
+    - name: Run K3s server installation
+      shell: |
+        if ! command -v k3s >/dev/null; then
+          curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION={{ k3s_version }}  K3S_TOKEN={{ k3s_token }} sh -s - server \
+          --server https://{{ hostvars[groups['control-plane-1'][0]]['ansible_host'] }}:6443 \
+          --disable traefik \
+          --disable servicelb \
+          --disable local-storage \
+          --docker \
+          --tls-san={{ hostvars[groups['virtual-load-balancer'][0]]['ansible_host'] }};
+        fi
+
+    - name: Sleep for 20 seconds
+      pause:
+        seconds: 20
 
     - name: Create .kube directory for root
       file:
