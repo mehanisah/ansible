@@ -1,0 +1,23 @@
+---
+- name: Longhorn storage class preset
+  hosts: all
+  become: true
+
+- name: Install open-iscsi and enable iscsid service
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update apt package index
+      apt:
+        update_cache: yes
+
+    - name: Install open-iscsi
+      apt:
+        name: open-iscsi
+        state: present
+
+    - name: Enable and start iscsid service
+      systemd:
+        name: iscsid
+        enabled: yes
+        state: started

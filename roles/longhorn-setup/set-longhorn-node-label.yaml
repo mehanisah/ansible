@@ -4,9 +4,7 @@
   become: true
   become_user: root
 
-  tasks:
-
-    - name: Set label on worker nodes
-      command: kubectl label nodes {{ item }} kubernetes.io/role=worker
+    - name: Set label on for Longhorn storage nodes
+      command: kubectl label nodes {{ item }} longhorn-node=true
       loop: "{{ groups['agent-host'] }}"
       delegate_to: "{{ inventory_hostname }}"
