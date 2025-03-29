@@ -1,6 +1,6 @@
 ---
 - name: Label K8s nodes
-  hosts: control-plane-1
+  hosts: virtual-load-balancer
   become: true
   become_user: root
 
@@ -8,10 +8,5 @@
 
     - name: Set label on worker nodes
       command: kubectl label nodes {{ item }} kubernetes.io/role=worker
-      loop: "{{ groups['agent-host'] }}"
-      delegate_to: "{{ inventory_hostname }}"
-
-    - name: Set label on for Longhorn storage nodes
-      command: kubectl label nodes {{ item }} longhorn-node=true
       loop: "{{ groups['agent-host'] }}"
       delegate_to: "{{ inventory_hostname }}"
