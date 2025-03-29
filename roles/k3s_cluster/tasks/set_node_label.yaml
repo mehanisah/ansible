@@ -1,6 +1,6 @@
 ---
 - name: Label K8s nodes
-  hosts: virtual-load-balancer
+  hosts: control-plane-1
   become: true
   become_user: root
 
