@@ -8,10 +8,10 @@
 
     - name: Set label app on worker nodes
       command: kubectl label nodes {{ item }} purpose=app
-      loop: "{{ groups['aget-app'] }}"
+      loop: "{{ groups['purpose-app'] }}"
       delegate_to: "{{ inventory_hostname }}"
 
     - name: Set label build on worker nodes
       command: kubectl label nodes {{ item }} purpose=build
-      loop: "{{ groups['agent-build'] }}"
+      loop: "{{ groups['purpose-build'] }}"
       delegate_to: "{{ inventory_hostname }}"
