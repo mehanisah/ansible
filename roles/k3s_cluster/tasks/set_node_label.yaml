@@ -6,7 +6,12 @@
 
   tasks:
 
-    - name: Set label on worker nodes
-      command: kubectl label nodes {{ item }} kubernetes.io/role=worker
-      loop: "{{ groups['agent-host'] }}"
+    - name: Set label app on worker nodes
+      command: kubectl label nodes {{ item }} purpose=app
+      loop: "{{ groups['aget-app'] }}"
+      delegate_to: "{{ inventory_hostname }}"
+
+    - name: Set label build on worker nodes
+      command: kubectl label nodes {{ item }} purpose=build
+      loop: "{{ groups['agent-build'] }}"
       delegate_to: "{{ inventory_hostname }}"
